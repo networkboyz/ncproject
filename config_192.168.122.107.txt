@@ -1,0 +1,83 @@
+en
+conf t
+hostname R7
+!
+!!!BASE CONFIG FOR MANAGEMENT ACCESS
+service password-encryption
+username alex password alex
+enable secret alex
+!
+ip domain-name wawasan.com
+crypto key generate rsa
+768
+
+!
+ip ssh version 2
+line vty 0 4
+login local
+transport input ssh
+transport output ssh
+!
+line vty 5 15
+transport input none
+transport output none
+!
+
+int g0/0
+no ip address
+cdp enable
+no shut
+!
+int g0/0.122
+desc MGMT
+encapsulation dot1q 122
+ip address 192.168.122.107 255.255.255.0
+no shut
+!
+!!!AUTOMATION SECTION
+int lo0
+ip address 7.7.7.7 255.255.255.255
+no shut
+!
+int lo1
+ip address 7.7.7.8 255.255.255.255
+no shut
+!
+int g0/0.67
+encapsulation dot1q 67
+ip address 133.1.67.7 255.255.255.0
+no shut
+!
+int g0/0.37
+encapsulation dot1q 37
+ip address 133.1.37.7 255.255.255.0
+no shut
+!
+int g0/0.7
+encapsulation dot1q 7
+ip address 133.1.7.7 255.255.255.0
+no shut
+!
+int g0/0.79
+encapsulation dot1q 79
+ip address 133.1.79.7 255.255.255.0
+no shut
+!
+router eigrp 1000
+network 7.7.7.7 0.0.0.0
+network 133.1.0.0
+!
+router bgp 300
+bgp log-neighbor-changes
+network 7.7.7.7 mask 255.255.255.255
+network 7.7.7.8 mask 255.255.255.255
+neighbor 1.1.1.1 remote-as 100
+neighbor 1.1.1.1 update-source lo0
+neighbor 1.1.1.1 ebgp-multihop
+neighbor 133.1.79.9 remote-as 54
+neighbor 133.1.79.9 update-source GigabitEthernet0/0.79
+!
+ip route 1.1.1.1 255.255.255.255 133.1.67.6
+ip route 10.10.10.10 255.255.255.255 133.1.108.10
+ip route 10.10.10.11 255.255.255.255 133.1.108.10
+!

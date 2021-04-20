@@ -1,0 +1,59 @@
+en
+conf t
+hostname R4
+!
+!!!BASE CONFIG FOR MANAGEMENT ACCESS
+service password-encryption
+username alex password alex
+enable secret alex
+!
+ip domain-name wawasan.com
+crypto key generate rsa
+768
+
+!
+ip ssh version 2
+line vty 0 4
+login local
+transport input ssh
+transport output ssh
+!
+line vty 5 15
+transport input none
+transport output none
+!
+
+int g0/0
+no ip address
+cdp enable
+no shut
+!
+int g0/0.122
+desc MGMT
+encapsulation dot1q 122
+ip address 192.168.122.104 255.255.255.0
+no shut
+!
+!!!AUTOMATION SECTION
+int g0/0.45
+encapsulation dot1q 45
+ip address 155.1.45.4 255.255.255.0
+!
+int g0/0.100
+encapsulation dot1q
+ip address 169.254.100.4 255.255.255.0
+!
+int g0/0.146
+encapsulation dot1q
+ip address 155.1.146.4 255.255.255.0
+!
+int lo0
+ip address 150.1.4.4 255.255.255.255
+no shut
+!
+router bgp 100
+bgp log-neighbor-changes
+network 150.1.4.4 255.255.255.255
+neighbor 150.1.1.1 rmeote-as 100
+neighbor 150.1.1.1 update-source loopback0
+!

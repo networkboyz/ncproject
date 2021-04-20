@@ -1,0 +1,71 @@
+en
+conf t
+hostname R10
+!
+!!!BASE CONFIG FOR MANAGEMENT ACCESS
+service password-encryption
+username alex password alex
+enable secret alex
+!
+ip domain-name wawasan.com
+crypto key generate rsa
+768
+
+!
+ip ssh version 2
+line vty 0 4
+login local
+transport input ssh
+transport output ssh
+!
+line vty 5 15
+transport input none
+transport output none
+!
+
+int g0/0
+no ip address
+cdp enable
+no shut
+!
+int g0/0.122
+desc MGMT
+encapsulation dot1q 122
+ip address 192.168.122.110 255.255.255.0
+no shut
+!
+!!!AUTOMATION SECTION
+int g0/0.108
+encapsulation dot1q 108
+ip address 133.1.108.10 255.255.255.0
+no shut
+!
+int g0/0.10
+encapsulation dot1q 10
+ip address 133.1.10.10 255.255.255.0
+no shut
+!
+int g0/0.210
+encapsulation dot1q 210
+ip address 133.1.210.10 255.255.255.0
+no shut
+!
+int lo0
+ip address 10.10.10.10 255.255.255.255
+no shut
+!
+int lo1
+ip address 10.10.10.11 255.255.255.255
+no shut
+!
+router eigrp 1000
+network 133.1.108.0 0.0.0.255
+!
+router bgp 54
+network 10.10.10.10 mask 255.255.255.255
+network 10.10.10.11 mask 255.255.255.255
+neighbor 133.1.79.9 remote-as 54
+neighbor 133.1.79.9 update-source GigabitEthernet0/0.108
+!
+ip route 3.3.3.3 255.255.255.255 133.1.108.8
+!

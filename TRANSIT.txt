@@ -1,0 +1,114 @@
+en
+conf t
+hostname TRANSIT
+!
+service password-encryption
+username alex password alex
+enable secret alex
+!
+ip domain-name wawasan.com
+crypto key generate rsa
+768
+!
+ip ssh version 2
+line vty 0 4
+login local
+transport input ssh
+transport output ssh
+!
+line vty 5 15
+transport input none
+transport output none
+!
+vlan 122
+name MGMT_VLAN
+!
+int vlan 122
+desc MGMT
+ip address 192.168.122.100 255.255.255.0
+no shut
+!
+int g2/2
+desc Automation-Container
+switchport mode access
+switchport access vlan 122
+!
+int g0/0
+desc Trunk To R1
+switchport trunk encapsulation dot1q
+switchport mode trunk
+shut
+no shut
+!
+int g0/1
+desc Trunk To R4
+switchport trunk encapsulation dot1q
+switchport mode trunk
+shut
+no shut
+!
+int g0/2
+desc Trunk To R6
+switchport trunk encapsulation dot1q
+switchport mode trunk
+shut
+no shut
+!
+int g0/3
+desc Trunk To R7
+switchport trunk encapsulation dot1q
+switchport mode trunk
+shut
+no shut
+!
+int g1/0
+desc Trunk To R9
+switchport trunk encapsulation dot1q
+switchport mode trunk
+shut
+no shut
+!
+int g1/1
+desc Trunk To R2
+switchport trunk encapsulation dot1q
+switchport mode trunk
+shut
+no shut
+!
+int g1/2
+desc Trunk To R3
+switchport trunk encapsulation dot1q
+switchport mode trunk
+shut
+no shut
+!
+int g1/3
+desc Trunk To R5
+switchport trunk encapsulation dot1q
+switchport mode trunk
+shut
+no shut
+!
+int g2/0
+desc Trunk To R8
+switchport trunk encapsulation dot1q
+switchport mode trunk
+shut
+no shut
+!
+vlan 13
+vlan 146
+vlan 100
+vlan 45
+vlan 67
+vlan 37
+vlan 7
+vlan 79
+vlan 23
+vlan 210
+vlan 58
+vlan 5
+vlan 8
+vlan 108
+vlan 10
+!
