@@ -2,6 +2,7 @@ from devices import R1,R2,R3,R4,R5,R6,R7,R8,R9,R10
 from datetime import datetime
 from netmiko import ConnectHandler
 import time
+from tqdm import tqdm
 
 def verify_config(net_connect, cmd='show run | inc router bg$
     #Check if BGP is configured on the router's
@@ -38,10 +39,10 @@ def main():
         net_connect.enable()
         print ("{}: {}".format(net_connect.device_type, net_$
         if verify_config(net_connect):
-            print ("BGP is configured on this router")
+            print ("\nBGP is configured on {}, going to remo$
             rm_config(net_connect, as_number=as_number)
         else:
-            print ("No BGP configured on this router.")
+            print ("No BGP configured on {}".format(net_conn$
 
         # Check BGP is removed.
         if verify_config(net_connect):
@@ -54,23 +55,34 @@ def main():
 
         # Configure BGP
         output = bgp_config(net_connect, file_name)
+        print ("\nConfiguring BGP for {}.....".format(net_co$
+        print (" ")
         print (output)
+        print (" ")
+        print ("{} Configuration Completed !".format(net_con$
+        print ('#' * 100)
 
         print
 
     # Wait for BGP Neighborship Establishment
-    time.sleep(60)
+    print ("\nHang on....while BGP neighborship being establ$
+    time.sleep(80)
 
     # Validate BGP Neighborship
     for a_device in device_list:
         net_connect = ConnectHandler(**a_device)
         net_connect.enable()
-        print ("Validating BGP: ")
-        print ("{}: {}".format(net_connect.device_type, net_$
+        print (" ")
+        print ("Validating BGP for {}.....".format(net_conne$
+        print (" ")
         output = net_connect.send_command("sh ip bgp sum")
-        print ('#' * 80)
+        print (" ")
+        output2 = net_connect.send_command("sh ip bgp nei | $
+        print ('#' * 100)
+        print ("BGP Peering Summary")
         print (output)
-        print ('#' * 80)
+        print (output2)
+        print ('#' * 100)
         print
 
     print ("Time elapsed: {}\n".format(datetime.now() - star$
